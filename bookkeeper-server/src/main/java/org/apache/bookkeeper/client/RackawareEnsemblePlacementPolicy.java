@@ -27,6 +27,8 @@ import org.apache.bookkeeper.net.BookieSocketAddress;
 import org.apache.bookkeeper.net.DNSToSwitchMapping;
 import org.apache.bookkeeper.net.Node;
 import org.apache.bookkeeper.stats.StatsLogger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A placement policy implementation use rack information for placing ensembles.
@@ -35,6 +37,8 @@ import org.apache.bookkeeper.stats.StatsLogger;
  */
 public class RackawareEnsemblePlacementPolicy extends RackawareEnsemblePlacementPolicyImpl
         implements ITopologyAwareEnsemblePlacementPolicy<TopologyAwareEnsemblePlacementPolicy.BookieNode> {
+    static final Logger LOG = LoggerFactory.getLogger(RackawareEnsemblePlacementPolicy.class);
+
     RackawareEnsemblePlacementPolicyImpl slave = null;
 
     public RackawareEnsemblePlacementPolicy() {
@@ -53,6 +57,7 @@ public class RackawareEnsemblePlacementPolicy extends RackawareEnsemblePlacement
                                                           boolean isWeighted,
                                                           int maxWeightMultiple,
                                                           StatsLogger statsLogger) {
+        LOG.info("Initializing RackawareEnsemblePlacementPolicy");
         if (stabilizePeriodSeconds > 0) {
             super.initialize(dnsResolver, timer, reorderReadsRandom, 0, isWeighted, maxWeightMultiple, statsLogger);
             slave = new RackawareEnsemblePlacementPolicyImpl(enforceDurability);

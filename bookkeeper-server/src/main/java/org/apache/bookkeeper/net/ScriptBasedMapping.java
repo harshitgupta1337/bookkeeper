@@ -21,12 +21,14 @@ package org.apache.bookkeeper.net;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Iterator;
 import java.util.StringTokenizer;
 
 import org.apache.bookkeeper.util.Shell.ShellCommandExecutor;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 
 /**
  * This class implements the {@link DNSToSwitchMapping} interface using a
@@ -138,9 +140,15 @@ public final class ScriptBasedMapping extends CachedDNSToSwitchMapping {
         @Override
         public void setConf(Configuration conf) {
             super.setConf(conf);
+
+            // TODO Remove this hardcoding
+            conf.setProperty(SCRIPT_FILENAME_KEY, "./resolv.sh");
+
+
             if (conf != null) {
                 scriptName = conf.getString(SCRIPT_FILENAME_KEY);
-                maxArgs = conf.getInt(SCRIPT_ARG_COUNT_KEY, DEFAULT_ARG_COUNT);
+                maxArgs = 8;
+                //maxArgs = conf.getInt(SCRIPT_ARG_COUNT_KEY, DEFAULT_ARG_COUNT);
             } else {
                 scriptName = null;
                 maxArgs = 0;
@@ -172,6 +180,7 @@ public final class ScriptBasedMapping extends CachedDNSToSwitchMapping {
 
             String output = runResolveCommand(names);
             if (output != null) {
+                LOG.info("Output of resolver = "+output);
                 StringTokenizer allSwitchInfo = new StringTokenizer(output);
                 while (allSwitchInfo.hasMoreTokens()) {
                     String switchInfo = allSwitchInfo.nextToken();

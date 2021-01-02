@@ -55,6 +55,7 @@ public class LocalBookieEnsemblePlacementPolicy implements EnsemblePlacementPoli
                                               Optional<DNSToSwitchMapping> optionalDnsResolver,
                                               HashedWheelTimer hashedWheelTimer,
                                               FeatureProvider featureProvider, StatsLogger statsLogger) {
+        LOG.info("Initializing LocalBookieEnsemblePlacementPolicy");
         // Configuration will have already the bookie configuration inserted
         ServerConfiguration serverConf = new ServerConfiguration();
         serverConf.addConfiguration(conf);

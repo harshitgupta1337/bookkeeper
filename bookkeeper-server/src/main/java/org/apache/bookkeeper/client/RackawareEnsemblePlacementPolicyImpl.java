@@ -234,6 +234,7 @@ public class RackawareEnsemblePlacementPolicyImpl extends TopologyAwareEnsembleP
                                                               boolean isWeighted,
                                                               int maxWeightMultiple,
                                                               StatsLogger statsLogger) {
+        LOG.info("Initializing RackawareEnsemblePlacementPolicyImpl");
         checkNotNull(statsLogger, "statsLogger should not be null, use NullStatsLogger instead.");
         this.statsLogger = statsLogger;
         this.bookiesJoinedCounter = statsLogger.getOpStatsLogger(BookKeeperServerStats.BOOKIES_JOINED);
@@ -303,12 +304,14 @@ public class RackawareEnsemblePlacementPolicyImpl extends TopologyAwareEnsembleP
             try {
                 dnsResolver = ReflectionUtils.newInstance(dnsResolverName, DNSToSwitchMapping.class);
                 if (dnsResolver instanceof Configurable) {
+                    LOG.info("Setting conf for dnsResolver");
                     ((Configurable) dnsResolver).setConf(conf);
                 }
 
                 if (dnsResolver instanceof RackChangeNotifier) {
                     ((RackChangeNotifier) dnsResolver).registerRackChangeListener(this);
                 }
+
             } catch (RuntimeException re) {
                 LOG.info("Failed to initialize DNS Resolver {}, used default subnet resolver : {}",
                     dnsResolverName, re, re.getMessage());
