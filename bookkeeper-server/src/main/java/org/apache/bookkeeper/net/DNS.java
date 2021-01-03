@@ -26,6 +26,11 @@ import java.util.Collections;
 import java.util.Enumeration;
 import java.util.LinkedHashSet;
 import java.util.Vector;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.Scanner;
+import java.util.Map;
+import java.util.HashMap;
 
 import javax.naming.NamingException;
 import javax.naming.directory.Attribute;
@@ -233,13 +238,34 @@ public class DNS {
     public static String[] getHosts(String strInterface, String nameserver)
             throws UnknownHostException {
         String[] ips = getIPs(strInterface);
+
+        Map<String, String> ipToHostname = new HashMap<String, String>();
+        try {
+            File f = new File("/etc/hosts");
+            Scanner reader = new Scanner (f);
+            while (reader.hasNextLine()) {
+                String data = reader.nextLine();
+                String[] splitted = data.split("\\s+");
+                if (splitted.length >= 2) {
+                    ipToHostname.put(splitted[0], splitted[1]);
+                }
+            }
+            reader.close();
+        } catch (FileNotFoundException e) {
+        }
+
         Vector<String> hosts = new Vector<String>();
         for (int ctr = 0; ctr < ips.length; ctr++) {
             try {
-                hosts.add(reverseDns(InetAddress.getByName(ips[ctr]),
-                        nameserver));
+                if (ipToHostname.get(ips[ctr]) == null) {
+                    throw new UnknownHostException();
+                } else {
+                    hosts.add(ipToHostname.get(ips[ctr]));
+                }
+                //hosts.add(reverseDns(InetAddress.getByName(ips[ctr]),
+                //        nameserver));
             } catch (UnknownHostException ignored) {
-            } catch (NamingException ignored) {
+            //} catch (NamingException ignored) {
             }
         }
         if (hosts.isEmpty()) {

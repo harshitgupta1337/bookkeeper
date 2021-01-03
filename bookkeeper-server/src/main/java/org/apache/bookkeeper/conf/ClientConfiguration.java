@@ -29,6 +29,7 @@ import org.apache.bookkeeper.client.BookKeeper.DigestType;
 import org.apache.bookkeeper.client.EnsemblePlacementPolicy;
 import org.apache.bookkeeper.client.LedgerHandle;
 import org.apache.bookkeeper.client.RackawareEnsemblePlacementPolicy;
+import org.apache.bookkeeper.client.SameRackEnsemblePlacementPolicy;
 import org.apache.bookkeeper.discover.RegistrationClient;
 import org.apache.bookkeeper.discover.ZKRegistrationClient;
 import org.apache.bookkeeper.replication.Auditor;
@@ -1085,7 +1086,8 @@ public class ClientConfiguration extends AbstractConfiguration<ClientConfigurati
     public Class<? extends EnsemblePlacementPolicy> getEnsemblePlacementPolicy()
             throws ConfigurationException {
         return ReflectionUtils.getClass(this, ENSEMBLE_PLACEMENT_POLICY,
-                RackawareEnsemblePlacementPolicy.class,
+                SameRackEnsemblePlacementPolicy.class,
+                //RackawareEnsemblePlacementPolicy.class,
                 EnsemblePlacementPolicy.class,
                                         DEFAULT_LOADER);
     }
